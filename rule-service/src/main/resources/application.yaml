@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: rule-service
+
+server:
+  port: 8082

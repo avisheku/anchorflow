@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  anchor-service:
+    build:
+      context: ./anchor-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      neo4j:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      - SPRING_NEO4J_URI=bolt://neo4j:7687
+      - SPRING_NEO4J_USERNAME=neo4j
+      - SPRING_NEO4J_PASSWORD=password
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/anchor_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_MAIN_WEB_APPLICATION_TYPE=servlet
+    container_name: anchor-service
+
+  neo4j:
+    image: neo4j:5.17
+    container_name: neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      - NEO4J_AUTH=neo4j/password
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:7474"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=anchor_db
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d anchor_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  neo4j_data:
+  postgres_data:

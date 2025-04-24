@@ -1,0 +1,30 @@
+type Query {
+    getAnchorByName(name: String!): Anchor
+    getAllAnchors: [Anchor!]!
+}
+
+type Anchor {
+    id: ID!
+    type: String!
+    name: String!
+    displayName: String
+    description: String
+    nodes: [Node]
+}
+
+type Node {
+    id: ID!
+    name: String!
+    type: String!
+    displayName: String
+    description: String
+    leafs: [Leaf]
+}
+
+type Leaf {
+    id: ID!
+    name: String!
+    type: String!
+    displayName: String
+    description: String
+}
