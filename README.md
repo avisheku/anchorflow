@@ -77,7 +77,7 @@ Example:
 ### API Documentation
 
 #### Swagger UI
-![Swagger UI](images/swagger.png)
+![Swagger UI](images/Swagger.png)
 - Interface: `http://localhost:8080/swagger-ui.html`
 
 #### GraphQL
