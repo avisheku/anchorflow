@@ -2,5 +2,4 @@ rootProject.name = 'anchorflow'
 
 include ':anchor-service'
 include ':common'
-include ':notification-service'
 include ':rule-service'

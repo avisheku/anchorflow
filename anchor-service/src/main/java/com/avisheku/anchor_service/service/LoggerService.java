@@ -24,7 +24,7 @@ public class LoggerService {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void logAction(String userId, EntityType type, String action, String name, Object request) {
+    public void logAction(String userId, EntityType type, String action, String name, String jsonPayload) {
         try {
             LogEntity logEntity = new LogEntity();
             logEntity.setRequestTimestamp(LocalDateTime.now());
@@ -32,22 +32,22 @@ public class LoggerService {
             logEntity.setType(type.name());
             logEntity.setAction(action);
             logEntity.setName(name);
-            logEntity.setEntityJson(objectMapper.writeValueAsString(request));
+            logEntity.setEntityJson(jsonPayload);
             logRepository.save(logEntity);
 
-            publishToKafka(type, action, request);
+            publishToKafka(type, action, jsonPayload);
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to log action", e);
         }
     }
 
-    private void publishToKafka(EntityType type, String action, Object request) throws JsonProcessingException {
+    private void publishToKafka(EntityType type, String action, String jsonPayload) throws JsonProcessingException {
         InternalNotification notification = new InternalNotification(
             UUID.randomUUID().toString(),
             type.name(),
             action,
-            request,
+            jsonPayload,
             System.currentTimeMillis()
         );
         

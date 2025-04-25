@@ -5,6 +5,8 @@ import com.avisheku.common.neo4j.*;
 import com.avisheku.common.postgresql.ActionItems;
 import com.avisheku.common.postgresql.EntityType;
 import com.avisheku.common.record.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +19,23 @@ public class AnchorService {
 
     private final AnchorRepository anchorRepository;
     private final LoggerService loggerService;
+    private final ObjectMapper objectMapper;
 
-    public AnchorService(AnchorRepository anchorRepository, LoggerService loggerService) {
+    public AnchorService(AnchorRepository anchorRepository, LoggerService loggerService, ObjectMapper objectMapper) {
         this.anchorRepository = anchorRepository;
         this.loggerService = loggerService;
+        this.objectMapper = objectMapper;
     }
 
     public AnchorEntity updateAnchorNameByOldName(String oldName, String newName) {
         AnchorEntity anchorEntity = anchorRepository.findByName(oldName)
                 .orElseThrow(() -> new IllegalArgumentException("AnchorEntity not found with name: " + oldName));
         anchorEntity.setName(newName);
-        loggerService.logAction(ActionItems.AVISHEKU.name(), EntityType.ANCHOR, ActionItems.UPDATE_ANCHOR_NAME.name(), oldName, anchorEntity);
+        try {
+            loggerService.logAction(ActionItems.AVISHEKU.name(), EntityType.ANCHOR, ActionItems.UPDATE_ANCHOR_NAME.name(), oldName, objectMapper.writeValueAsString(anchorEntity));
+        } catch (JsonProcessingException e) {
+            log.error("Failed to serialize anchor entity", e);
+        }
         return anchorRepository.save(anchorEntity);
     }
 
@@ -54,7 +62,11 @@ public class AnchorService {
                 .nodes(nodeEntities)
                 .build();
 
-        loggerService.logAction(ActionItems.AVISHEKU.name(), EntityType.ANCHOR, ActionItems.CREATE_ANCHOR.name(), anchor.name(), anchor);
+        try {
+            loggerService.logAction(ActionItems.AVISHEKU.name(), EntityType.ANCHOR, ActionItems.CREATE_ANCHOR.name(), anchor.name(), objectMapper.writeValueAsString(anchor));
+        } catch (JsonProcessingException e) {
+            log.error("Failed to serialize anchor", e);
+        }
         return anchorRepository.save(entity);
     }
 

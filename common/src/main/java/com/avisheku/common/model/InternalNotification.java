@@ -4,6 +4,6 @@ public record InternalNotification(
     String id,
     String type,
     String action,
-    Object payload,
+    String payload,
     long timestamp
 ) {} 

@@ -1,0 +1,43 @@
+package com.avisheku.rule_service.rules
+
+dialect "mvel"
+
+import com.avisheku.common.model.InternalNotification
+import com.avisheku.common.neo4j.AnchorEntity
+import com.avisheku.common.neo4j.LeafEntity
+import com.avisheku.common.neo4j.NodeEntity
+import com.avisheku.rule_service.service.RuleProcessingService
+import com.fasterxml.jackson.databind.ObjectMapper
+
+global org.slf4j.Logger log
+global ObjectMapper objectMapper
+
+rule "Process Anchor Notification"
+    when
+        $notification: InternalNotification(type == "ANCHOR")
+        $service: RuleProcessingService()
+    then
+        log.info("Firing rule: Process Anchor Notification");
+        AnchorEntity anchor = objectMapper.readValue($notification.payload(), AnchorEntity.class);
+        $service.processAnchor(anchor);
+end
+
+rule "Process Node Notification"
+    when
+        $notification: InternalNotification(type == "NODE")
+        $service: RuleProcessingService()
+    then
+        log.info("Firing rule: Process Node Notification");
+        NodeEntity node = objectMapper.readValue($notification.payload(), NodeEntity.class);
+        $service.processNode(node);
+end
+
+rule "Process Leaf Notification"
+    when
+        $notification: InternalNotification(type == "LEAF")
+        $service: RuleProcessingService()
+    then
+        log.info("Firing rule: Process Leaf Notification");
+        LeafEntity leaf = objectMapper.readValue($notification.payload(), LeafEntity.class);
+        $service.processLeaf(leaf);
+end 

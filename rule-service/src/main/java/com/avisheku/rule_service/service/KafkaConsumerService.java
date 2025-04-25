@@ -8,6 +8,11 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class KafkaConsumerService {
+    private final RuleProcessingService ruleProcessingService;
+
+    public KafkaConsumerService(RuleProcessingService ruleProcessingService) {
+        this.ruleProcessingService = ruleProcessingService;
+    }
 
     @KafkaListener(topics = "${kafka.topic.internal-notification}", groupId = "${spring.kafka.consumer.group-id}")
     public void listenInternalNotification(InternalNotification notification) {
@@ -15,5 +20,6 @@ public class KafkaConsumerService {
             notification.type(), 
             notification.action(), 
             notification.payload());
+        ruleProcessingService.processNotification(notification);
     }
 } 

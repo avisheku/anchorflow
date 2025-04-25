@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.4.4'
+	id 'org.springframework.boot' version '3.2.4'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -17,20 +17,40 @@ repositories {
 	mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:3.2.4'
+    }
+}
+
 dependencies {
 	implementation project(':common')
 	
+	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.kafka:spring-kafka'
-	
 	implementation 'org.springframework.boot:spring-boot-starter-data-neo4j'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	runtimeOnly 'org.postgresql:postgresql:42.7.3'
+	implementation 'org.springframework.kafka:spring-kafka'
 	
 	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	
+	implementation 'org.drools:drools-core:7.73.0.Final'
+	implementation 'org.drools:drools-compiler:7.73.0.Final'
+	implementation 'org.drools:drools-mvel:7.73.0.Final'
+	implementation 'org.kie:kie-api:7.73.0.Final'
+	implementation 'org.kie:kie-spring:7.73.0.Final'
+	
+	runtimeOnly 'org.postgresql:postgresql:42.7.3'
+}
+
+// include rules in jar
+processResources {
+    from('src/main/resources/rules') {
+        include '**/*.drl'
+    }
 }
 
 task prepareKotlinBuildScriptModel {
