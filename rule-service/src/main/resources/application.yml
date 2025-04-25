@@ -1,16 +1,25 @@
 spring:
   application:
-    name: anchor-service
+    name: rule-service
+  
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: rule-service-group
+      auto-offset-reset: earliest
+  
   neo4j:
     uri: bolt://neo4j:7687
     authentication:
       username: neo4j
       password: password
+  
   datasource:
     url: jdbc:postgresql://postgres:5432/anchor_db
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
+  
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -20,24 +29,10 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-  graphql:
-    graphiql:
-      enabled: true
-      path: /graphiql
-    schema:
-      printer:
-        enabled: true
-    path: /graphql
 
 kafka:
   topic:
     internal-notification: internal-notification
 
 server:
-  port: 8080
-
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
+  port: 8081 

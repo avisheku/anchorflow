@@ -2,7 +2,8 @@ package com.avisheku.anchor_service.service;
 
 import com.avisheku.anchor_service.repository.AnchorRepository;
 import com.avisheku.common.neo4j.*;
-import com.avisheku.common.postgresql.ActionType;
+import com.avisheku.common.postgresql.ActionItems;
+import com.avisheku.common.postgresql.EntityType;
 import com.avisheku.common.record.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,18 +16,18 @@ import java.util.Optional;
 public class AnchorService {
 
     private final AnchorRepository anchorRepository;
-    private final LogService logService;
+    private final LoggerService loggerService;
 
-    public AnchorService(AnchorRepository anchorRepository, LogService logService) {
+    public AnchorService(AnchorRepository anchorRepository, LoggerService loggerService) {
         this.anchorRepository = anchorRepository;
-        this.logService = logService;
+        this.loggerService = loggerService;
     }
 
     public AnchorEntity updateAnchorNameByOldName(String oldName, String newName) {
         AnchorEntity anchorEntity = anchorRepository.findByName(oldName)
                 .orElseThrow(() -> new IllegalArgumentException("AnchorEntity not found with name: " + oldName));
         anchorEntity.setName(newName);
-        logService.logAction(ActionType.AVISHEKU.name(), ActionType.UPDATE_ANCHOR_NAME.name(), oldName, anchorEntity);
+        loggerService.logAction(ActionItems.AVISHEKU.name(), EntityType.ANCHOR, ActionItems.UPDATE_ANCHOR_NAME.name(), oldName, anchorEntity);
         return anchorRepository.save(anchorEntity);
     }
 
@@ -53,7 +54,7 @@ public class AnchorService {
                 .nodes(nodeEntities)
                 .build();
 
-        logService.logAction(ActionType.AVISHEKU.name(), ActionType.CREATE_ANCHOR.name(), anchor.name(), anchor);
+        loggerService.logAction(ActionItems.AVISHEKU.name(), EntityType.ANCHOR, ActionItems.CREATE_ANCHOR.name(), anchor.name(), anchor);
         return anchorRepository.save(entity);
     }
 

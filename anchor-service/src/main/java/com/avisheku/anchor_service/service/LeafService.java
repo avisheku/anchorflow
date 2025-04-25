@@ -2,7 +2,8 @@ package com.avisheku.anchor_service.service;
 
 import com.avisheku.common.neo4j.LeafEntity;
 import com.avisheku.anchor_service.repository.LeafRepository;
-import com.avisheku.common.postgresql.ActionType;
+import com.avisheku.common.postgresql.ActionItems;
+import com.avisheku.common.postgresql.EntityType;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,18 +13,18 @@ import java.util.Optional;
 public class LeafService {
 
     private final LeafRepository leafRepository;
-    private final LogService logService;
+    private final LoggerService loggerService;
 
-    public LeafService(LeafRepository leafRepository, LogService logService) {
+    public LeafService(LeafRepository leafRepository, LoggerService loggerService) {
         this.leafRepository = leafRepository;
-        this.logService = logService;
+        this.loggerService = loggerService;
     }
 
     public LeafEntity updateLeafNameByOldName(String oldName, String newName) {
         LeafEntity leafEntity = leafRepository.findByName(oldName)
                 .orElseThrow(() -> new IllegalArgumentException("LeafEntity not found with name: " + oldName));
         leafEntity.setName(newName);
-        logService.logAction(ActionType.AVISHEKU.name(), ActionType.UPDATE_LEAF_NAME.name(), oldName, leafEntity);
+        loggerService.logAction(ActionItems.AVISHEKU.name(), EntityType.LEAF, ActionItems.UPDATE_LEAF_NAME.name(), oldName, leafEntity);
         return leafRepository.save(leafEntity);
     }
 

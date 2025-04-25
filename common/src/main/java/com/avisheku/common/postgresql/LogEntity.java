@@ -27,6 +27,9 @@ public class LogEntity {
     @Column(name = "action", nullable = false)
     private String action;
 
+    @Column(name = "type", nullable = false)
+    private String type;
+
     @Column(name = "name", nullable = false)
     private String name;
 

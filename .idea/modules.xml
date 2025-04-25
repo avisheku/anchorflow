@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/anchorflow.anchor-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/anchorflow.anchor-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/1854519109/anchorflow.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/1854519109/anchorflow.common.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-942463298/anchorflow.rule-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/-942463298/anchorflow.rule-service.main.iml" />
     </modules>
   </component>
 </project>
